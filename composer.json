@@ -1,0 +1,7 @@
+{
+  "name": "vendor/prompt-api",
+  "license": "proprietary",
+  "require": {
+    "components/jquery": "^3.7"
+  }
+}

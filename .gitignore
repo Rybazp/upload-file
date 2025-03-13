@@ -1,0 +1,5 @@
+/vendor/
+/node_modules/
+.env
+idryba_rsa
+idryba_rsa.pub
