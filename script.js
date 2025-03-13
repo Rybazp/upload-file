@@ -1,4 +1,10 @@
 $(document).ready(function () {
+    const allowedTypes = [
+        'video/mp4',
+        'video/avi',
+        'video/quicktime'
+    ];
+    const maxSize = 1024 * 1024 * 1024; // 1GB
     const chunkSize = 1024 * 1024; // 1MB
     let currentChunk;
     let totalChunks;
@@ -18,9 +24,29 @@ $(document).ready(function () {
             return;
         }
 
+        if (!validateFile(file)) {
+            return;
+        }
+
         totalChunks = Math.ceil(file.size / chunkSize);
         currentChunk = getLastUploadedChunk(file.name) || 0;
         uploadNextChunk();
+    }
+
+    function validateFile(file) {
+        if (!allowedTypes.includes(file.type)) {
+            console.error('Invalid file type');
+            alert('Invalid file type');
+            return false;
+        }
+
+        if (file.size > maxSize) {
+            console.error('Maximum file size');
+            alert('The file size exceeds the maximum allowed size');
+            return false;
+        }
+
+        return true;
     }
 
     function uploadNextChunk() {
@@ -49,10 +75,12 @@ $(document).ready(function () {
                         uploadNextChunk();
                     } else {
                         console.log('File upload complete!');
+                        alert('Upload complete');
                         clearLastUploadedChunk(file.name);
                     }
                 } else {
                     console.log('Error during chunk upload');
+                    alert('Upload failed');
                 }
             },
             error: function () {
@@ -76,14 +104,26 @@ $(document).ready(function () {
     }
 
     function saveLastUploadedChunk(fileName, chunk) {
-        localStorage.setItem(fileName + '_last_chunk', chunk);
+        try{
+            localStorage.setItem(fileName + '_last_chunk', chunk);
+        } catch(error) {
+            console.log(error);
+        }
     }
 
     function getLastUploadedChunk(fileName) {
-        return parseInt(localStorage.getItem(fileName + '_last_chunk'));
+        try {
+            return parseInt(localStorage.getItem(fileName + '_last_chunk'));
+        } catch(error) {
+            console.log(error);
+        }
     }
 
     function clearLastUploadedChunk(fileName) {
-        localStorage.removeItem(fileName + '_last_chunk');
+        try {
+            localStorage.removeItem(fileName + '_last_chunk');
+        } catch(error) {
+            console.log(error);
+        }
     }
 });
